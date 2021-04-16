@@ -36,15 +36,18 @@ class SVM:
         
         
         if self.optim == 'SMO':
-            self.alpha, self.b = fit_smo(tol = self.tol,
+            result = fit_smo(tol = self.tol,
                                     C = self.C,
                                     kernel=self.kernel,
                                     train_X = train_X,
                                     train_y = train_y,
                                     max_passes=5)
         
-        self.train_X = train_X
-        self.train_y = train_y    
+        self.train_X = result['train_X']
+        self.train_y = result['train_y']  
+        self.b = result['b']
+        self.alpha = result['alpha']  
+        
         self.has_been_fit = True
     
     def predict(self, test_X):

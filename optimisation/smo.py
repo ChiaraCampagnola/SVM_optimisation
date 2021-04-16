@@ -80,4 +80,13 @@ def fit_smo(tol, C, kernel, train_X, train_y, max_passes):
                 changed_alpha = True
         if not changed_alpha:
             passes += 1
-    return alpha, b
+            
+    # Find support vectors so we keep only elements corresponding to suport vectors
+    SV = alpha > 0
+    
+    result = {'train_X': train_X[SV,:],
+              'train_y': train_y[SV],
+              'alpha': alpha[SV],
+              'b': b}
+    
+    return result
