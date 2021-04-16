@@ -1,2 +1,4 @@
 .ipynb_checkpoints/
 test.py
+__pycache__/
+*.npz
