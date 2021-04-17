@@ -53,3 +53,22 @@ def accuracy(training, test):
 
 def predict(alpha, kernel_matrix, b, train_y):
     return np.sign(np.multiply(alpha, train_y) @ kernel_matrix + b)
+
+def Q_matrix(train_X, train_y, kernel):
+    a, b = np.meshgrid(train_y,train_y)
+    yy = np.multiply(a,b)
+    k = kernel(train_X, train_X)
+    
+    return np.multiply(yy,k)
+
+def is_pos_def(x):
+    return np.all(np.linalg.eigvals(x) > 0)
+
+def calculate_g(alpha, Q):
+    A = np.sum(alpha)
+    a, b = np.meshgrid(alpha,alpha)
+    B = np.multiply(a,b)
+    B = np.multiply(B, Q)
+    B = np.sum(B)
+    
+    return A-0.5*B

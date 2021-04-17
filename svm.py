@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
 from utils.utils import rbf_kernel, accuracy
 from optimisation.smo import fit_smo
 
@@ -38,7 +40,7 @@ class SVM:
         if self.optim == 'SMO':
             result = fit_smo(tol = self.tol,
                                     C = self.C,
-                                    kernel=self.kernel,
+                                    kernel_fun=self.kernel,
                                     train_X = train_X,
                                     train_y = train_y,
                                     max_passes=5)
@@ -46,7 +48,8 @@ class SVM:
         self.train_X = result['train_X']
         self.train_y = result['train_y']  
         self.b = result['b']
-        self.alpha = result['alpha']  
+        self.alpha = result['alpha'] 
+        self.g_iterates = result['g']
         
         self.has_been_fit = True
     
@@ -69,4 +72,23 @@ class SVM:
         
         pred_y = self.predict(test_X)
         return accuracy(pred_y, test_y)
+    
+    def plot_convergence(self):
+        '''
+        Plot:
+            - the error of g vs iteration number 
+            - the convergence of g (g_{t+1} - g_star)/(g_t - g_star)
+        '''
+        g_star = self.g_iterates[-1] # Use the last value of g obtained as the comparison
+        g_min_gstar = self.g_iterates-g_star
+        nominator = g_min_gstar[1:] # g_{t+1} - g_star
+        denominator = g_min_gstar[:-1] # g_t - g_star
+        iterates = np.divide(nominator, denominator)
+        t = np.arange(1,len(iterates)+1)
         
+        # Plot
+        plt.figure()
+        plt.plot(t, iterates, label='$(g_{t+1}-g^*)/(g_t-g^*)$')
+        plt.plot(t, -g_min_gstar[:-1], label='Error $(g_t-g^*)$')
+        plt.legend(fontsize = 'large')
+        plt.show()

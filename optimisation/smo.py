@@ -1,7 +1,7 @@
 import numpy as np
-from utils.utils import predict
+from utils.utils import predict, Q_matrix, calculate_g
 
-def fit_smo(tol, C, kernel, train_X, train_y, max_passes):
+def fit_smo(tol, C, kernel_fun, train_X, train_y, max_passes):
     num_training_examples = train_y.shape[0]
 
     # Initialise
@@ -9,7 +9,9 @@ def fit_smo(tol, C, kernel, train_X, train_y, max_passes):
     b = 0
     passes = 0
     
-    kernel = kernel(train_X, train_X)
+    kernel = kernel_fun(train_X, train_X)
+    
+    g_iterates = []
     
     while passes < max_passes:
         changed_alpha = False
@@ -78,6 +80,9 @@ def fit_smo(tol, C, kernel, train_X, train_y, max_passes):
                     b = (b1+b2)/2
                 
                 changed_alpha = True
+                
+                g_iterates.append(calculate_g(alpha, Q_matrix(train_X, train_y, kernel_fun)))
+                
         if not changed_alpha:
             passes += 1
             
@@ -87,6 +92,7 @@ def fit_smo(tol, C, kernel, train_X, train_y, max_passes):
     result = {'train_X': train_X[SV,:],
               'train_y': train_y[SV],
               'alpha': alpha[SV],
-              'b': b}
+              'b': b,
+              'g': g_iterates}
     
     return result
