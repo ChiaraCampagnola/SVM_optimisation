@@ -2,17 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from utils.utils import rbf_kernel, accuracy
-from optimisation.smo import fit_smo
+from optimisation.smo import SMO
 
 class SVM:
     def __init__(self,
-                 optim = 'SMO',
+                 optim = 'SMO-slow',
                  kernel = 'rbf',
                  C = 1,
                  fit_tol = 1e-3):
         
         # Check that inputs are valid
-        if optim not in ['SMO']:
+        if optim not in ['SMO-slow', 'SMO-fast']:
             print("ERROR: optimisation method not supported.")
             return
         if kernel not in ['rbf']:
@@ -37,13 +37,25 @@ class SVM:
         '''
         
         
-        if self.optim == 'SMO':
-            result = fit_smo(tol = self.tol,
+        if self.optim == 'SMO-slow':
+            smo = SMO(tol = self.tol,
+                      C = self.C,
+                      kernel_fun=self.kernel,
+                      train_X = train_X,
+                      train_y = train_y,
+                      max_passes = 5,
+                      speed = 'slow')
+            result = smo.fit()
+        
+        if self.optim == 'SMO-fast':
+            result = smo_fast(tol = self.tol,
                                     C = self.C,
                                     kernel_fun=self.kernel,
                                     train_X = train_X,
                                     train_y = train_y,
                                     max_passes=5)
+            
+            
         
         self.train_X = result['train_X']
         self.train_y = result['train_y']  
