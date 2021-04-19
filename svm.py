@@ -9,7 +9,9 @@ class SVM:
                  optim = 'SMO-slow',
                  kernel = 'rbf',
                  C = 1,
-                 fit_tol = 1e-3):
+                 fit_tol = 1e-3,
+                 max_passes = 5,
+                 calc_g_iterates = False):
         
         # Check that inputs are valid
         if optim not in ['SMO-slow', 'SMO-fast']:
@@ -25,6 +27,8 @@ class SVM:
         self.C = C
         self.kernel_type = kernel
         self.tol = fit_tol
+        self.max_passes = max_passes
+        self.calc_g_iterates = calc_g_iterates
         
         if self.kernel_type == 'rbf':
             self.kernel = rbf_kernel
@@ -43,17 +47,21 @@ class SVM:
                       kernel_fun=self.kernel,
                       train_X = train_X,
                       train_y = train_y,
-                      max_passes = 5,
-                      speed = 'slow')
+                      max_passes = self.max_passes,
+                      speed = 'slow',
+                      calc_g_iterates = self.calc_g_iterates)
             result = smo.fit()
         
         if self.optim == 'SMO-fast':
-            result = smo_fast(tol = self.tol,
-                                    C = self.C,
-                                    kernel_fun=self.kernel,
-                                    train_X = train_X,
-                                    train_y = train_y,
-                                    max_passes=5)
+            smo = SMO(tol = self.tol,
+                      C = self.C,
+                      kernel_fun=self.kernel,
+                      train_X = train_X,
+                      train_y = train_y,
+                      max_passes = self.max_passes,
+                      speed = 'fast',
+                      calc_g_iterates = self.calc_g_iterates)
+            result = smo.fit()
             
             
         

@@ -54,10 +54,13 @@ def accuracy(training, test):
 def predict(alpha, kernel_matrix, b, train_y):
     return np.sign(np.multiply(alpha, train_y) @ kernel_matrix + b)
 
-def Q_matrix(train_X, train_y, kernel):
+def Q_matrix(train_X, train_y, kernel, kernel_matrix = None):
     a, b = np.meshgrid(train_y,train_y)
     yy = np.multiply(a,b)
-    k = kernel(train_X, train_X)
+    if kernel_matrix is None:
+        k = kernel(train_X, train_X)
+    else:
+        k = kernel_matrix
     
     return np.multiply(yy,k)
 
