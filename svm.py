@@ -1,18 +1,21 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utils.utils import rbf_kernel, accuracy
+from utils.utils import accuracy
+from utils.kernels import rbf_kernel
 from optimisation.smo import SMO
 
 class SVM:
     def __init__(self,
-                 optim = 'SMO-slow',
+                 optim = 'SMO',
                  kernel = 'rbf',
                  C = 1,
-                 fit_tol = 1e-3):
+                 max_passes = 5,
+                 fit_tol = 1e-3,
+                 calc_g_iterates = False):
         
         # Check that inputs are valid
-        if optim not in ['SMO-slow', 'SMO-fast']:
+        if optim not in ['SMO', 'SMO']:
             print("ERROR: optimisation method not supported.")
             return
         if kernel not in ['rbf']:
@@ -25,6 +28,8 @@ class SVM:
         self.C = C
         self.kernel_type = kernel
         self.tol = fit_tol
+        self.max_passes = max_passes
+        self.calc_g_iterates = calc_g_iterates
         
         if self.kernel_type == 'rbf':
             self.kernel = rbf_kernel
@@ -37,30 +42,26 @@ class SVM:
         '''
         
         
-        if self.optim == 'SMO-slow':
+        if self.optim == 'SMO':
             smo = SMO(tol = self.tol,
                       C = self.C,
                       kernel_fun=self.kernel,
                       train_X = train_X,
                       train_y = train_y,
-                      max_passes = 5,
-                      speed = 'slow')
+                      max_passes = self.max_passes,
+                      calc_g_iterates = self.calc_g_iterates)
             result = smo.fit()
-        
-        if self.optim == 'SMO-fast':
-            result = smo_fast(tol = self.tol,
-                                    C = self.C,
-                                    kernel_fun=self.kernel,
-                                    train_X = train_X,
-                                    train_y = train_y,
-                                    max_passes=5)
-            
             
         
+        # Overwrite training data to exclude non support vectors
         self.train_X = result['train_X']
-        self.train_y = result['train_y']  
+        self.train_y = result['train_y'] 
+        
+        # Save prediction parameters
         self.b = result['b']
-        self.alpha = result['alpha'] 
+        self.alpha = result['alpha']
+        
+        # Save the dual function iterations (to analyse convergence)
         self.g_iterates = result['g']
         
         self.has_been_fit = True
