@@ -33,11 +33,6 @@ def Q_matrix(train_X, train_y, kernel):
 def is_pos_def(x):
     return np.all(np.linalg.eigvals(x) > 0)
 
-def calculate_g(alpha, Q):
-    A = np.sum(alpha)
-    a, b = np.meshgrid(alpha,alpha)
-    B = np.multiply(a,b)
-    B = np.multiply(B, Q)
-    B = np.sum(B)
-    
-    return A-0.5*B
+def calculate_g(alpha, train_X, train_y, kernel):
+    alpha_y = np.multiply(alpha, train_y)
+    return np.sum(alpha) - 0.5*np.transpose(xy)@kernel@xy

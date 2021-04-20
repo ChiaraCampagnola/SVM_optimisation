@@ -46,7 +46,7 @@ class SMO:
                     changed_alpha = self.optimise_alphas(i, j)
                     
                     if self.calc_g_iterates:
-                        self.g_iterates.append(calculate_g(self.alpha, Q_matrix(self.train_X, self.train_y, self.kernel_fun)))
+                        self.g_iterates.append(calculate_g(self.alpha, self.train_X, self.train_y, self.kernel))
                     
             if not changed_alpha:
                 passes += 1
