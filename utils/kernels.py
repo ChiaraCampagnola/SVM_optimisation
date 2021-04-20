@@ -32,3 +32,15 @@ def rbf_kernel(train_X, test_X):
         })
     
     return K
+
+def linear_kernel(X_train, X_test):
+    return np.matmul(X_train, np.transpose(X_test))
+
+def polynomial_kernel(X_train, X_test, degree = 2, gamma = None, c = 1):
+    
+    if gamma is None:
+        gamma = 1/X_train.shape[1] # Default value = 1/number of features
+    
+    dot = np.matmul(X_train, np.transpose(X_test))
+    
+    return np.power(gamma*dot + c, degree)

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from utils.utils import accuracy
-from utils.kernels import rbf_kernel
+from utils.kernels import *
 from optimisation.smo import SMO
 
 class SVM:
@@ -18,7 +18,7 @@ class SVM:
         if optim not in ['SMO', 'SMO']:
             print("ERROR: optimisation method not supported.")
             return
-        if kernel not in ['rbf']:
+        if kernel not in ['rbf', 'linear', 'polynomial']:
             print("ERROR: kernel type not supported.")
             return
         
@@ -33,6 +33,10 @@ class SVM:
         
         if self.kernel_type == 'rbf':
             self.kernel = rbf_kernel
+        elif self.kernel_type == 'linear':
+            self.kernel = linear_kernel
+        elif self.kernel_type == 'polynomial':
+            self.kernel = polynomial_kernel
         
         self.has_been_fit = False # Flag to see if the fit method has been called
         
