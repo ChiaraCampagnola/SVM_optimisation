@@ -18,15 +18,19 @@ class ObjectiveFunction:
         
         
         '''
-        
         # Standard SVM dual function, g
-        a, b = np.meshgrid(alpha,alpha)
-        B = np.multiply(a,b)
-        B = np.sum(np.multiply(B, self.Q))
-    
-        g = np.sum(alpha) - 0.5 * B
+        g = np.sum(alpha) - 0.5 * np.transpose(alpha) @ self.Q @ alpha
         
         # Barriers
         barriers = - np.sum(np.log(alpha)) - np.sum(np.log(C-alpha))
         
         return -t*g + barriers
+    
+    def df(self, alpha, C, t):
+        '''
+        Returns gradient of the objective function
+        '''
+        dg = 1 - self.Q @ alpha # Gradient of g
+        dbarriers = 1/(C - alpha) - 1/alpha # Gradient of the barriers
+        
+        return -t*dg + dbarriers
