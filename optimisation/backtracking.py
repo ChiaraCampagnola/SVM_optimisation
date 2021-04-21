@@ -1,6 +1,6 @@
 import numpy as np
 
-def backtracking(F, x_k, p, alpha0, rho, c1):
+def backtracking(F, x_k, p, alpha0, rho=0.1, c1=1e-4):
     '''
     Backtracking line search algorithm (see Alg 3.1 in Nocedal & Wright)
     

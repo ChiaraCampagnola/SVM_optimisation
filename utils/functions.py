@@ -34,3 +34,10 @@ class ObjectiveFunction:
         dbarriers = 1/(self.C - alpha) - 1/alpha # Gradient of the barriers
         
         return -self.t*dg + dbarriers
+    
+    def d2f(self, alpha):
+        '''
+        Return hessian of the objective function
+        '''
+        
+        return t*self.Q + np.diag(1/np.power(alpha,2)) + np.diag(1/np.power(C-alpha,2))
