@@ -20,7 +20,7 @@ def backtracking(F, x_k, p, alpha0, rho=0.1, c1=1e-4):
     alpha_iterates = [alpha0]
     alpha = alpha0
     
-    while F.f(x_k + alpha*p) > F.f(x_k) + c1 * alpha * np.dot(F.df(x_k), p): # Stopping condition
+    while F.f(x_k + alpha*p) > F.f(x_k) + c1 * alpha * np.dot(np.transpose(F.df(x_k)), p): # Stopping condition
         alpha = rho * alpha
         alpha_iterates.append(alpha)
     

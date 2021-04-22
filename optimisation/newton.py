@@ -53,15 +53,28 @@ def newton_step(F, A, b, x):
             M               v              h
      
     '''
+    
     d2f = F.d2f(x)
+    df = F.df(x)
     r = d2f.shape[0]
     c = A.shape[0]
     
+    #print(x.shape)
+    #print(d2f.shape)
+    #print(A.shape)
+    
     m1 = np.vstack((d2f, A))
-    m2 = np.vstack((np.transpose(A), np.zeros((r,c))))
+    m2 = np.vstack((A.reshape(-1,1), 0))
+    #print(m1.shape)
+    #print(m2.shape)
     M = np.hstack((m1,m2))
     
-    h = np.hstack((-F.df(x), b))
+    #print(df.shape)
+    #print(df.reshape(-1,1).shape)
+    h = np.vstack((-df.reshape(-1,1), 0))
+    
+    #print(M.shape)
+    #print(h.shape)
     
     try:
         res = np.linalg.solve(M,h)

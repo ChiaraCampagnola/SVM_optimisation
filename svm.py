@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from utils.utils import accuracy
 from utils.kernels import *
 from optimisation.smo import SMO
+from optimisation.barrier import BarrierMethod
 
 class SVM:
     def __init__(self,
@@ -15,7 +16,7 @@ class SVM:
                  calc_g_iterates = False):
         
         # Check that inputs are valid
-        if optim not in ['SMO', 'SMO']:
+        if optim not in ['SMO', 'barrier']:
             print("ERROR: optimisation method not supported.")
             return
         if kernel not in ['rbf', 'linear', 'polynomial']:
@@ -56,6 +57,13 @@ class SVM:
                       calc_g_iterates = self.calc_g_iterates)
             result = smo.fit()
             
+        if self.optim == 'barrier':
+            barrier = BarrierMethod(self.tol,
+                                    kernel_fun = self.kernel,
+                                    train_X = train_X,
+                                    train_y = train_y,
+                                    C = self.C)
+            result = barrier.fit()
         
         # Overwrite training data to exclude non support vectors
         self.train_X = result['train_X']
@@ -77,8 +85,8 @@ class SVM:
         kernel_matrix = self.kernel(self.train_X, test_X)
         if not self.has_been_fit:
             print("ERROR: the SVM has not been fit with training data.")
-            
-        return np.sign(np.multiply(self.alpha, self.train_y) @ kernel_matrix + self.b)  
+        
+        return np.sign(np.transpose(np.multiply(self.alpha, self.train_y)) @ kernel_matrix + self.b)  
 
     def get_accuracy(self, test_X, test_y):
         '''

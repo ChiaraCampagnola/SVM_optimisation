@@ -16,8 +16,14 @@ def scikit_svm(kernel, train_X, train_y, test_X, test_y):
     return accuracy(pred_y, test_y)
     
 def accuracy(training, test):
+    training = training.squeeze()
+    test = test.squeeze()
+    
     total = len(training)
     correct = np.sum(training==test)
+    
+    #print(total)
+    #print(correct)
     return correct/total
 
 def predict(alpha, kernel_matrix, b, train_y):
