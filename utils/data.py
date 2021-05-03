@@ -1,7 +1,7 @@
 import numpy as np
 from keras.datasets import mnist
 
-def create_data(file_name, classes):
+def create_data(file_name, classes, max_train = None, max_test = None):
     '''
     Donwload the MNIST data and select only the two classes specified in 'classes'
 
@@ -30,6 +30,14 @@ def create_data(file_name, classes):
     # Flatten images
     train_X = train_X.reshape(train_X.shape[0], -1)
     test_X = test_X.reshape(test_X.shape[0], -1)
+    
+    if max_train:
+        train_X = train_X[:max_train,:]
+        train_y = train_y[:max_train]
+        
+    if max_test:
+        test_X = test_X[:max_test,:]
+        test_y = test_y[:max_test] 
 
     np.savez_compressed(file_name, train_X=train_X, train_y=train_y, test_X=test_X, test_y=test_y)
     

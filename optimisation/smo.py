@@ -52,11 +52,17 @@ class SMO:
                 passes += 1
                 
         # Find support vectors so we keep only elements corresponding to suport vectors
-        SV = self.alpha > 0
+        # SV = self.alpha > 0
         
-        result = {'train_X': self.train_X[SV,:],
-                'train_y': self.train_y[SV],
-                'alpha': self.alpha[SV],
+        # result = {'train_X': self.train_X[SV,:],
+        #         'train_y': self.train_y[SV],
+        #         'alpha': self.alpha[SV],
+        #         'b': self.b,
+        #         'g': self.g_iterates}
+        
+        result = {'train_X': self.train_X,
+                'train_y': self.train_y,
+                'alpha': self.alpha,
                 'b': self.b,
                 'g': self.g_iterates}
         

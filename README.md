@@ -8,7 +8,7 @@
 - [ ] Implement interior point method
     - [x] Implement backtracking
     - [x] Implement Newton's method
-    - [ ] Feasible start
-    - [ ] Implement barrier method
+    - [x] Feasible start
+    - [x] Implement barrier method
 - [x] Analyse convergence SMO
-- [ ] Analyse convergence IPM
+- [x] Analyse convergence IPM

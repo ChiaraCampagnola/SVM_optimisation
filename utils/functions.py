@@ -25,29 +25,33 @@ class ObjectiveFunction:
         assert self.Q.shape[0] == alpha.shape[0], f'Wrong dimensions, Q = {self.Q.shape}, alpha: {alpha.shape}'
         assert self.Q.shape[1] == alpha.shape[0], f'Wrong dimensions, Q = {self.Q.shape}, alpha: {alpha.shape}'
         
-        #print(f'Q: {self.Q}')
-        #print(f'alpha: {alpha}')
-        #print(f' Zero: {alpha[alpha==0]}')
-        #print(f'matmul: {np.transpose(alpha) @ self.Q @ alpha}')
+        #print(f'alpha zero: {np.sum(alpha[alpha == 0])}')
+        #print(f'alpha less than zero: {np.sum(alpha[alpha < 0])}')
+        
+        #assert np.any(alpha <= 0) == False, 'Alpha values <= 0'
         
         # Standard SVM dual function, g
         g = np.sum(alpha) - 0.5 * np.transpose(alpha) @ self.Q @ alpha
-        #print(f'g: {g}')
+
         # Barriers
         barriers = - np.sum(np.log(alpha)) - np.sum(np.log(self.C-alpha))
         
-        return -self.t*g + barriers
+        result = (-self.t*g + barriers).squeeze()
+        
+        assert np.isnan(result) == False, 'F.f is nan'
+        
+        return result
     
     def df(self, alpha):
         '''
         Returns gradient of the objective function
         '''
-        dg = 1 - self.Q @ alpha # Gradient of g
+        dg = self.Q @ alpha - 1 # Gradient of g (negative)
         dbarriers = 1/(self.C - alpha) - 1/alpha # Gradient of the barriers
         
         assert np.isnan(np.sum(dbarriers)) == False, 'NaN values in dbarriers'
         
-        return -self.t*dg + dbarriers
+        return self.t*dg + dbarriers
     
     def d2f(self, alpha):
         '''
@@ -59,3 +63,9 @@ class ObjectiveFunction:
         assert np.isnan(np.sum(d2f)) == False, 'NaN values in d2f'
         
         return d2f
+    
+    def reset(self, train_X, train_y):
+        self.train_X = train_X
+        self.train_y = train_y
+        
+        self.Q = Q_matrix(train_X, train_y, self.kernel)

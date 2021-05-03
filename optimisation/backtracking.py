@@ -1,6 +1,6 @@
 import numpy as np
 
-def backtracking(F, x_k, p, alpha0, rho=0.1, c1=1e-4):
+def backtracking(F, x_k, p, step_length0, rho=0.5, c1=1e-4):
     '''
     Backtracking line search algorithm (see Alg 3.1 in Nocedal & Wright)
     
@@ -13,15 +13,15 @@ def backtracking(F, x_k, p, alpha0, rho=0.1, c1=1e-4):
     c1: constant in sufficient decrease condition
     
     Returns:
-    alpha: step length
-    alpha_iterates: step length history
+    step: step length
+    step_iterates: step length history
     '''
     # Init
-    alpha_iterates = [alpha0]
-    alpha = alpha0
+    step_iterates = [step_length0]
+    step = step_length0
     
-    while F.f(x_k + alpha*p) > F.f(x_k) + c1 * alpha * np.dot(np.transpose(F.df(x_k)), p): # Stopping condition
-        alpha = rho * alpha
-        alpha_iterates.append(alpha)
+    while F.f(x_k + step*p) > F.f(x_k) + c1 * step * np.dot(np.transpose(F.df(x_k)), p): # Stopping condition
+        step = rho * step
+        step_iterates.append(step)
     
-    return alpha, alpha_iterates
+    return step, step_iterates
